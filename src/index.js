@@ -11,39 +11,28 @@ import { devTools, persistState } from "redux-devtools";
 // React components for Redux DevTools
 import { DevTools, DebugPanel, LogMonitor } from "redux-devtools/lib/react";
 
-
-function logger({ getState }) {
-  return (next) => (action) => {
-    console.log("will dispatch", action)
-
-    // Call the next dispatch method in the middleware chain.
-    let returnValue = next(action)
-
-    console.log("state after dispatch", getState())
-
-    // This will likely be the action itself, unless
-    // a middleware further in chain changed it.
-    return returnValue
-  }
-}
-
-function mid1({ getState, dispatch }) {
+function mid1({ dispatch }) {
   return (next) => (action) => {
 
-    // This will likely be the action itself, unless
-    // a middleware further in chain changed it.
-    if(action.type === "2") {
-      dispatch({type:"1", content: "dostuff"});
-      var result = next(action);
-      console.log("res");
-      console.log(result);
-      return result;
+    if(action.type === "3") {
+      dispatch({type:"2", content: "test2"});
     }
     return next(action);
   }
 }
 
-const app = function(state, action) {
+function mid2({ dispatch }) {
+  return (next) => (action) => {
+
+    if(action.type === "2") {
+      dispatch({type:"1", content: "test1"});
+    }
+    return next(action);
+  }
+}
+
+
+const app = function(state = {content: "test0"}, action) {
   console.log("Inside app reducer");
   console.log(action.type);
   switch(action.type) {
@@ -66,8 +55,8 @@ const app = function(state, action) {
 
 const finalCreateStore = compose(
   applyMiddleware(
-    logger,
-    mid1
+    mid1,
+    mid2
   ),
   // Provides support for DevTools:
   devTools(),
