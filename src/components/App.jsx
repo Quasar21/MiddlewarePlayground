@@ -7,7 +7,7 @@ import { connect } from "react-redux";
 const App = React.createClass({
   render () {
     let dispatch = this.props.dispatch;
-    dispatch({type:"2", content: "Wow"});
+    dispatch({type:"3", content: "test"});
 
     return <h1>Hello middleware</h1>
   }
